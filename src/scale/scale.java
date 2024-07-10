@@ -1,62 +1,49 @@
 package scale;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class scale {
-
-	static int n;
-	static int[] w;
-	static boolean[][] result;
-
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		n = Integer.parseInt(br.readLine());
-		StringTokenizer st = new StringTokenizer(br.readLine());
-
-
-		w = new int[n];
-		result = new boolean[n+1][40001];
-		for(int i=0; i<n; i++) {
-			int src = Integer.parseInt(st.nextToken());
-			w[i] = src;
+	static int N, M, question, max=15000, arr[];
+	static boolean dp[][];
+	
+	public static void main(String [] args) throws IOException {
+		
+		BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+		
+		N= Integer.parseInt(br.readLine());
+		arr= new int[N+1];
+		dp= new boolean[31][max+1];
+		
+		StringTokenizer st= new StringTokenizer(br.readLine());
+		for(int i=1; i<=N; i++) {
+			arr[i]= Integer.parseInt(st.nextToken());
 		}
-
-		dp(0,0);
-
-		for(int j=0; j<20; j++) {
-			if(result[n][j]) {
-				System.out.println(j);
-				System.out.print(result[n][j]+" ");
-			}
+		
+		find_dp(0,0);
+		
+		StringBuilder sb= new StringBuilder();
+		M= Integer.parseInt(br.readLine());
+		st= new StringTokenizer(br.readLine());
+		for(int i=0; i<M; i++) {
+			question= Integer.parseInt(st.nextToken());
+			if(question>15000)  sb.append("N ");
+			else sb.append(dp[N][question]?"Y ":"N ");
 		}
-
-		int c = Integer.parseInt(br.readLine());
-		StringBuilder sb = new StringBuilder();
-		st = new StringTokenizer(br.readLine());
-		for(int i=0; i<c; i++) {
-			int t = Integer.parseInt(st.nextToken());
-
-			if(result[n][t]) {
-				sb.append("Y ");
-			}else {
-				sb.append("N ");
-			}
-		}
-
-		System.out.println(sb.toString());
+		System.out.println(sb);
+		br.close();
 	}
-
-	static void dp(int cnt, int num) {
-		if(result[cnt][num]) return;
-		result[cnt][num] = true;
-
-		if(cnt == n	) return;
-
-		dp(cnt+1, num+ w[cnt]);
-		dp(cnt+1, num);
-		dp(cnt+1, Math.abs(num- w[cnt]));
-
+	
+	public static void find_dp(int idx, int weight) {
+		if(dp[idx][weight]) return;
+		dp[idx][weight]=true;
+		if(idx==N) return;
+		
+		find_dp(idx+1, weight+arr[idx+1]);
+		find_dp(idx+1, weight);
+		find_dp(idx+1, Math.abs(weight-arr[idx+1]));
 	}
 }
